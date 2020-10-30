@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>redis-caching</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+   <h1>Urban dictionary search</h1> 
+    <input type="text" name="search" id="searchInput">
+    <button onclick="searchWord()" id="searchButton" type="button">Search</button>
+    <ul id="container"></ul>
+   <script defer>
+    
+        const search = document.getElementById("searchInput")
+        const container = document.getElementById("container")
+        function buildHtml(list) {
+            container.innerHTML = list.map(item => {
+                const html = `<li>${item.definition}</li>`
+                return html
+            }).join("")
+
+        }
+
+        function searchWord (e) {
+            const v = search.value
+            if(!v) return
+            fetch("/" + v)
+            .then(res => {
+                if(res.ok) return res
+                throw res.statusText
+            })
+            .then(res => res.json())
+            .then(json => buildHtml(json.list))
+            .catch(err => console.error(err))
+        }
+
+    
+   </script>
+</body>
+</html>
